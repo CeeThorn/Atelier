@@ -5,6 +5,7 @@ import cors from "cors";
 import messageRoutes from "./routes/messages";
 import conversationRoutes from "./routes/conversations";
 import profileRoutes from "./routes/profiles";
+import addressesRoutes from "./routes/addresses";
 
 
 console.log(" SERVER FILE STARTED");
@@ -24,7 +25,8 @@ app.get("/", (req, res) => {
 //  routes
 app.use("/messages", messageRoutes);
 app.use("/conversations", conversationRoutes);
-app.use("/profiles", profileRoutes)
+app.use("/profiles", profileRoutes);
+app.use("/addresses", addressesRoutes);
 
 
 

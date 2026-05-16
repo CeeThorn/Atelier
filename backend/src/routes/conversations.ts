@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { getConversations } from "../actions/conversations";
+import { deleteConversation, getConversations } from "../actions/conversations";
 
 const router = Router();
 
 router.get("/", getConversations);
+router.delete("/"), deleteConversation
 
 export default router;

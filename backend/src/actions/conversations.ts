@@ -2,21 +2,23 @@ import { Request, Response } from "express";
 import { supabase } from "../lib/supabase";
 
 export const getConversations = async (req: Request, res: Response) => {
-  try {
-    const { user_id } = req.query;
+  const { user_id } = req.query;
 
-    const { data, error } = await supabase
-      .from("conversations")
-      .select("*")
-      .eq("user_id", user_id)
-      .order("created_at", { ascending: false });
+  let query = supabase
+    .from("conversations")
+    .select("*")
+    .order("created_at", { ascending: false });
 
-    if (error) throw error;
-
-    return res.json(data);
-  } catch (err: any) {
-    return res.status(500).json({ error: err.message });
+  // if NOT admin request → filter
+  if (user_id) {
+    query = query.eq("user_id", user_id);
   }
+
+  const { data, error } = await query;
+
+  if (error) return res.status(500).json(error);
+
+  res.json(data);
 };
 
 export const createConversation = async (req: Request, res: Response) => {
@@ -38,4 +40,22 @@ export const createConversation = async (req: Request, res: Response) => {
   if (error) return res.status(500).json(error);
 
   res.json(data);
+};
+
+export const deleteConversation = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  await supabase
+    .from("messages")
+    .delete()
+    .eq("conversation_id", id);
+
+  const { error } = await supabase
+    .from("conversations")
+    .delete()
+    .eq("id", id);
+
+  if (error) return res.status(500).json(error);
+
+  res.json({ success: true });
 };
